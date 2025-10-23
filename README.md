@@ -26,11 +26,41 @@ Frontend (Static Web App) → Azure Functions API → Azure OpenAI
 ```
 epd-frontend/
 ├── index.html                 # Hauptanwendung
+├── api-tests/                 # Bruno API Test Collection
+│   ├── bruno.json            # Collection Konfiguration
+│   ├── Health Check.bru      # API Health Test
+│   ├── Extract EPD - *.bru   # EPD Extraktions-Tests
+│   └── environments/         # Test-Umgebungen
 ├── staticwebapp.config.json   # Azure SWA Konfiguration
 ├── .env                       # Umgebungsvariablen
 ├── DEPLOYMENT_ANLEITUNG.md     # Deployment-Anleitung
 └── README.md                  # Diese Datei
 ```
+
+## 🧪 API Testing mit Bruno
+
+Das Repository enthält eine vollständige Bruno API Test Collection unter `api-tests/`.
+
+### Bruno Installation
+```bash
+# Via Winget
+winget install Bruno.Bruno
+
+# Via Chocolatey
+choco install bruno
+```
+
+### Tests ausführen
+1. Bruno öffnen
+2. "Open Collection" → `api-tests/` Ordner wählen
+3. Tests ausführen:
+   - **Health Check** - API-Status prüfen
+   - **Extract EPD - Concrete** - Concrete EPD testen
+   - **Extract EPD - Door Handle** - Door Handle EPD testen
+   - **CORS Preflight Check** - CORS-Validierung
+
+### Verfügbare Test-Environments
+- **Production:** `https://epd-extractor-api-2025.azurewebsites.net`
 
 ## 🔧 Konfiguration
 
