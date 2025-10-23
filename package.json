@@ -1,0 +1,14 @@
+{
+  "name": "epd-frontend",
+  "version": "1.0.0",
+  "description": "EPD Frontend for Azure Static Web App",
+  "scripts": {
+    "build": "echo 'No build step needed for static HTML app'"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kulle1966/epd-frontend.git"
+  },
+  "author": "Christoph Kullmann",
+  "license": "MIT"
+}
