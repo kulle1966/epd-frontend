@@ -352,7 +352,7 @@
                 const formData = new FormData();
                 formData.append('pdf', file);
                 
-                const response = await fetch(`${API_BASE_URL}/api/extract-epd`, {
+                const response = await fetch(`${API_BASE_URL}/api/extract`, {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -377,6 +377,11 @@
         function displayResults(data) {
             hideLoading();
             
+            console.log('API Response:', data); // Debug output
+            
+            // Handle new API structure
+            const extractedData = data.data || data;
+            
             // Update CO2 value
             const co2 = data.carbonFootprintPerKg;
             if (co2 && co2.value !== "Not calculable") {
@@ -388,11 +393,24 @@
                 document.getElementById('co2Value').style.color = '#e74c3c';
             }
             
-            // Update details
-            document.getElementById('materialName').textContent = data.materialName || 'Nicht gefunden';
-            document.getElementById('functionalUnit').textContent = data.functionalUnit || 'Nicht gefunden';
-            document.getElementById('gwpValue').textContent = data.gwp || 'Nicht gefunden';
-            document.getElementById('materialDensity').textContent = data.materialDensity || 'Nicht gefunden';
+            // Update details - check both new and old structure
+            document.getElementById('materialName').textContent = 
+                extractedData.product_name || data.materialName || 'Nicht gefunden';
+            
+            document.getElementById('functionalUnit').textContent = 
+                extractedData.functional_unit || data.functionalUnit || 'Nicht gefunden';
+            
+            // GWP from nested structure
+            const gwpValue = extractedData.gwp?.value || data.gwp || 'Nicht gefunden';
+            const gwpUnit = extractedData.gwp?.unit || 'kg CO2-eq';
+            document.getElementById('gwpValue').textContent = 
+                gwpValue !== 'Nicht gefunden' ? `${gwpValue} ${gwpUnit}` : gwpValue;
+            
+            // Material density from nested structure  
+            const densityValue = extractedData.material_density?.value || data.materialDensity || 'Nicht gefunden';
+            const densityUnit = extractedData.material_density?.unit || 'kg/m³';
+            document.getElementById('materialDensity').textContent = 
+                densityValue !== 'Nicht gefunden' ? `${densityValue} ${densityUnit}` : densityValue;
             
             // Show full results
             document.getElementById('fullResults').textContent = JSON.stringify(data, null, 2);
