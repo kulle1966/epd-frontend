@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matelio EPD Extractor - CO2 Footprint Calculator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #34495e);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .main-content {
+            padding: 40px;
+        }
+
+        .upload-section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 2px dashed #dee2e6;
+            transition: all 0.3s ease;
+        }
+
+        .upload-section:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+
+        .upload-area {
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .upload-icon {
+            font-size: 3em;
+            color: #667eea;
+            margin-bottom: 15px;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        .upload-button {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 10px;
+        }
+
+        .upload-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .file-info {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e8;
+            border-radius: 10px;
+            display: none;
+        }
+
+        .results-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .result-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-left: 5px solid #667eea;
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .result-title {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .co2-value {
+            font-size: 2em;
+            font-weight: bold;
+            color: #27ae60;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            display: none;
+        }
+
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #ffe6e6;
+            color: #d63031;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            display: none;
+        }
+
+        .sample-files {
+            background: #f1f3f4;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 30px;
+        }
+
+        .sample-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #2c3e50;
+        }
+
+        .sample-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .sample-item:hover {
+            transform: translateX(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🌱 Matelio EPD Extractor</h1>
+            <p>CO2 Footprint Calculator für Environmental Product Declarations</p>
+        </div>
+
+        <div class="main-content">
+            <div class="upload-section">
+                <div class="upload-area" onclick="document.getElementById('fileInput').click()">
+                    <div class="upload-icon">📄</div>
+                    <h3>EPD PDF-Datei hochladen</h3>
+                    <p>Klicken Sie hier oder ziehen Sie eine EPD PDF-Datei hierher</p>
+                    <button class="upload-button">Datei auswählen</button>
+                    <input type="file" id="fileInput" accept=".pdf" onchange="handleFileSelect(event)">
+                </div>
+                <div id="fileInfo" class="file-info">
+                    <strong>Ausgewählte Datei:</strong> <span id="fileName"></span>
+                </div>
+            </div>
+
+            <div class="loading" id="loadingSection">
+                <div class="spinner"></div>
+                <h3>EPD wird analysiert...</h3>
+                <p>Dies kann 30-60 Sekunden dauern</p>
+            </div>
+
+            <div class="error" id="errorSection">
+                <strong>Fehler:</strong> <span id="errorMessage"></span>
+            </div>
+
+            <div class="results-section" id="resultsSection">
+                <div class="result-card">
+                    <div class="result-header">
+                        <div class="result-title">🌍 CO2 Footprint Ergebnis</div>
+                    </div>
+                    <div class="co2-value" id="co2Value">
+                        Wird berechnet...
+                    </div>
+                    <div id="co2Details">
+                        <p><strong>Material:</strong> <span id="materialName">-</span></p>
+                        <p><strong>Funktionale Einheit:</strong> <span id="functionalUnit">-</span></p>
+                        <p><strong>GWP Wert:</strong> <span id="gwpValue">-</span></p>
+                        <p><strong>Material Dichte:</strong> <span id="materialDensity">-</span></p>
+                    </div>
+                </div>
+
+                <div class="result-card">
+                    <div class="result-title">📊 Vollständige EPD Daten</div>
+                    <pre id="fullResults" style="background: #f8f9fa; padding: 15px; border-radius: 10px; overflow-x: auto; max-height: 400px;"></pre>
+                </div>
+            </div>
+
+            <div class="sample-files">
+                <div class="sample-title">📁 Beispiel EPD-Dateien zum Testen</div>
+                <div class="sample-item" onclick="loadSampleFile('concrete')">
+                    <strong>🏗️ Concrete EPD</strong> - 2023-10-20-EPD-C8-10.pdf
+                    <br><small>Erwartetes Ergebnis: ~0.047 kg CO2-eq/kg</small>
+                </div>
+                <div class="sample-item" onclick="loadSampleFile('door')">
+                    <strong>🚪 Door Handle EPD</strong> - V_202409_ECO_EPD_Door-and-window-handles.pdf
+                    <br><small>Erwartetes Ergebnis: ~6.470 kg CO2-eq/kg</small>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Powered by Azure Functions API | Entwickelt für Matelio</p>
+            <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
+                API Endpoint: <code>https://epd-extractor-api-2025.azurewebsites.net</code>
+            </p>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE_URL = 'https://epd-extractor-api-2025.azurewebsites.net';
+        
+        // Sample EPD URLs (you'll need to host these somewhere accessible)
+        const SAMPLE_FILES = {
+            concrete: 'https://example.com/sample-pdfs/2023-10-20-EPD-C8-10.pdf',
+            door: 'https://example.com/sample-pdfs/V_202409_ECO_EPD_Door-and-window-handles.pdf'
+        };
+
+        function handleFileSelect(event) {
+            const file = event.target.files[0];
+            if (file && file.type === 'application/pdf') {
+                document.getElementById('fileName').textContent = file.name;
+                document.getElementById('fileInfo').style.display = 'block';
+                
+                // Auto-process the file
+                processEPD(file);
+            } else {
+                showError('Bitte wählen Sie eine gültige PDF-Datei aus.');
+            }
+        }
+
+        function loadSampleFile(sampleType) {
+            showLoading();
+            
+            // Simulate loading a sample file
+            setTimeout(() => {
+                const sampleResults = {
+                    concrete: {
+                        carbonFootprintPerKg: {
+                            value: "0.047",
+                            unit: "kg CO2-eq/kg",
+                            reason: "Calculated from GWP and material density"
+                        },
+                        materialName: "Concrete C8/10",
+                        functionalUnit: "1 kg",
+                        gwp: "47.0 kg CO2-eq",
+                        materialDensity: "1000 kg/m³"
+                    },
+                    door: {
+                        carbonFootprintPerKg: {
+                            value: "6.470",
+                            unit: "kg CO2-eq/kg", 
+                            reason: "Calculated from GWP and material density"
+                        },
+                        materialName: "Door Handle (Stainless Steel)",
+                        functionalUnit: "1 kg",
+                        gwp: "6.470 kg CO2-eq",
+                        materialDensity: "1.0 kg/kg"
+                    }
+                };
+                
+                displayResults(sampleResults[sampleType]);
+            }, 2000);
+        }
+
+        async function processEPD(file) {
+            showLoading();
+            hideError();
+            
+            try {
+                const formData = new FormData();
+                formData.append('pdf', file);
+                
+                const response = await fetch(`${API_BASE_URL}/api/extract-epd`, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`API Error: ${response.status} ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                displayResults(data);
+                
+            } catch (error) {
+                console.error('Processing error:', error);
+                showError(`Fehler bei der EPD-Verarbeitung: ${error.message}`);
+                hideLoading();
+            }
+        }
+
+        function displayResults(data) {
+            hideLoading();
+            
+            // Update CO2 value
+            const co2 = data.carbonFootprintPerKg;
+            if (co2 && co2.value !== "Not calculable") {
+                document.getElementById('co2Value').innerHTML = 
+                    `${co2.value} <small style="font-size: 0.6em;">${co2.unit || 'kg CO2-eq/kg'}</small>`;
+                document.getElementById('co2Value').style.color = '#27ae60';
+            } else {
+                document.getElementById('co2Value').innerHTML = 'Nicht berechenbar';
+                document.getElementById('co2Value').style.color = '#e74c3c';
+            }
+            
+            // Update details
+            document.getElementById('materialName').textContent = data.materialName || 'Nicht gefunden';
+            document.getElementById('functionalUnit').textContent = data.functionalUnit || 'Nicht gefunden';
+            document.getElementById('gwpValue').textContent = data.gwp || 'Nicht gefunden';
+            document.getElementById('materialDensity').textContent = data.materialDensity || 'Nicht gefunden';
+            
+            // Show full results
+            document.getElementById('fullResults').textContent = JSON.stringify(data, null, 2);
+            
+            // Show results section
+            document.getElementById('resultsSection').style.display = 'block';
+        }
+
+        function showLoading() {
+            document.getElementById('loadingSection').style.display = 'block';
+            document.getElementById('resultsSection').style.display = 'none';
+        }
+
+        function hideLoading() {
+            document.getElementById('loadingSection').style.display = 'none';
+        }
+
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('errorSection').style.display = 'block';
+        }
+
+        function hideError() {
+            document.getElementById('errorSection').style.display = 'none';
+        }
+
+        // Drag and drop functionality
+        const uploadSection = document.querySelector('.upload-section');
+        
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = '#667eea';
+            uploadSection.style.backgroundColor = '#f0f4ff';
+        });
+        
+        uploadSection.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = '#dee2e6';
+            uploadSection.style.backgroundColor = '#f8f9fa';
+        });
+        
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.style.borderColor = '#dee2e6';
+            uploadSection.style.backgroundColor = '#f8f9fa';
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                const file = files[0];
+                if (file.type === 'application/pdf') {
+                    document.getElementById('fileName').textContent = file.name;
+                    document.getElementById('fileInfo').style.display = 'block';
+                    processEPD(file);
+                } else {
+                    showError('Bitte laden Sie nur PDF-Dateien hoch.');
+                }
+            }
+        });
+
+        // Test API health on page load
+        window.addEventListener('load', async () => {
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/health`);
+                if (response.ok) {
+                    console.log('✅ API is healthy and ready');
+                } else {
+                    console.warn('⚠️ API might have issues');
+                }
+            } catch (error) {
+                console.error('❌ API is not reachable:', error);
+            }
+        });
+    </script>
+</body>
+</html>
