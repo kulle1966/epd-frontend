@@ -32,6 +32,7 @@
             color: white;
             padding: 30px;
             text-align: center;
+            position: relative;
         }
 
         .header h1 {
@@ -42,6 +43,21 @@
         .header p {
             font-size: 1.2em;
             opacity: 0.9;
+        }
+
+        .version-info {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255,255,255,0.1);
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .version-info div {
+            margin: 2px 0;
         }
 
         .main-content {
@@ -217,6 +233,10 @@
 <body>
     <div class="container">
         <div class="header">
+            <div class="version-info">
+                <div><strong>Frontend:</strong> v1.1.0</div>
+                <div><strong>API:</strong> <span id="apiVersion">Loading...</span></div>
+            </div>
             <h1>🌱 Matelio EPD Extractor</h1>
             <p>CO2 Footprint Calculator für Environmental Product Declarations</p>
         </div>
@@ -388,7 +408,7 @@
                 const formData = new FormData();
                 formData.append('pdf', file);
                 
-                const response = await fetch(`${API_BASE_URL}/api/extractEPD`, {
+                const response = await fetch(`${API_BASE_URL}/api/extract-epd`, {
                     method: 'POST',
                     body: formData,
                     headers: {
@@ -536,17 +556,26 @@
             }
         });
 
-        // Test API health on page load
+        // Test API health on page load and get version
         window.addEventListener('load', async () => {
             try {
                 const response = await fetch(`${API_BASE_URL}/api/health`);
                 if (response.ok) {
+                    const healthData = await response.json();
                     console.log('✅ API is healthy and ready');
+                    
+                    // Update API version display
+                    const apiVersion = healthData.version || 'Unknown';
+                    document.getElementById('apiVersion').textContent = `v${apiVersion}`;
+                    
+                    console.log(`Frontend: v1.1.0 | API: v${apiVersion}`);
                 } else {
                     console.warn('⚠️ API might have issues');
+                    document.getElementById('apiVersion').textContent = 'Error';
                 }
             } catch (error) {
                 console.error('❌ API is not reachable:', error);
+                document.getElementById('apiVersion').textContent = 'Offline';
             }
         });
     </script>
