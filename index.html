@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Matelio EPD Extractor - CO2 Footprint Calculator</title>
+    <title>Matelio GreenComplay EPD-Extractor - CO2 Footprint Calculator</title>
     <style>
         * {
             margin: 0;
@@ -237,7 +237,7 @@
                 <div><strong>Frontend:</strong> v1.1.0</div>
                 <div><strong>API:</strong> <span id="apiVersion">Loading...</span></div>
             </div>
-            <h1>🌱 Matelio EPD Extractor</h1>
+            <h1>🌱 Matelio GreenComplay EPD-Extractor</h1>
             <p>CO2 Footprint Calculator für Environmental Product Declarations</p>
         </div>
 
@@ -267,12 +267,12 @@
 
             <div class="results-section" id="resultsSection">
                 <!-- CO2 Calculation Highlight Card -->
-                <div class="result-card" style="background: linear-gradient(135deg, #27ae60, #2ecc71); color: white; border: 3px solid #27ae60; margin-bottom: 30px;">
+                <div class="result-card" style="background: linear-gradient(135deg, #2c3e50, #34495e); color: white; border: 3px solid #3498db; margin-bottom: 30px;">
                     <div style="padding: 25px; text-align: center;">
-                        <h3 style="margin: 0 0 15px 0; font-size: 1.2em;">🌱 CO₂ EQUIVALENT PER KG MATERIAL</h3>
-                        <div class="co2-value" id="co2Value" style="font-size: 2.5em; margin: 10px 0;">Wird berechnet...</div>
-                        <div id="calculationDetails" style="font-size: 0.9em; opacity: 0.9; margin-top: 15px;">
-                            Calculation: <span id="calculationFormula">wird berechnet...</span><br>
+                        <h3 style="margin: 0 0 15px 0; font-size: 1.2em; color: #ecf0f1;">🌱 CO₂ EQUIVALENT PER KG MATERIAL</h3>
+                        <div class="co2-value" id="co2Value" style="font-size: 2.5em; margin: 10px 0; color: #3498db; text-shadow: 0 0 10px rgba(52, 152, 219, 0.3);">Wird berechnet...</div>
+                        <div id="calculationDetails" style="font-size: 0.9em; opacity: 0.9; margin-top: 15px; color: #bdc3c7;">
+                            Calculation: <span id="calculationFormula" style="color: #ecf0f1;">wird berechnet...</span><br>
                             Calculated using material density (volume-based)
                         </div>
                     </div>
@@ -337,7 +337,7 @@
         </div>
 
         <div class="footer">
-            <p>Powered by Azure Functions API | Entwickelt für Matelio</p>
+            <p>Powered by Azure Functions API | Entwickelt für Matelio GreenComplay</p>
             <p style="margin-top: 10px; font-size: 0.9em; opacity: 0.8;">
                 API Endpoint: <code>https://epd-extractor-api-2025.azurewebsites.net</code>
             </p>
