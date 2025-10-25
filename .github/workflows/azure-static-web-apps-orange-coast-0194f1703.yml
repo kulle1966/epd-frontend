@@ -22,7 +22,7 @@ jobs:
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_COAST_0194F1703 }}
+          azure_static_web_apps_api_token: eb86c66101b692e6ac92dc0e09a451d62d47e21856235381b264d68ec1a509f303-b4bd9705-b4e7-4885-80e8-6d7ba056e10900308050194f1703
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           action: "upload"
           app_location: "/"
@@ -37,5 +37,5 @@ jobs:
         id: closepullrequest
         uses: Azure/static-web-apps-deploy@v1
         with:
-          azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_ORANGE_COAST_0194F1703 }}
+          azure_static_web_apps_api_token: eb86c66101b692e6ac92dc0e09a451d62d47e21856235381b264d68ec1a509f303-b4bd9705-b4e7-4885-80e8-6d7ba056e10900308050194f1703
           action: "close"
